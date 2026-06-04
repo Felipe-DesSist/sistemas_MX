@@ -1,0 +1,23 @@
+Options -Indexes
+
+# Segurança básica
+<FilesMatch "\.(env|json|md|git|log|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Cache de assets estáticos
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css              "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png             "access plus 1 year"
+    ExpiresByType image/jpeg            "access plus 1 year"
+    ExpiresByType image/svg+xml         "access plus 1 year"
+    ExpiresByType font/woff2            "access plus 1 year"
+</IfModule>
+
+# Compressão gzip
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript
+</IfModule>

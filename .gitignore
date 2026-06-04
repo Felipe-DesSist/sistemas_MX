@@ -1,0 +1,21 @@
+﻿# ─── Windows sistema ────────────────────────────────────
+System Volume Information/
+
+# ─── Backend ───────────────────────────────────────────
+backend/.env
+backend/vendor/
+backend/storage/logs/*
+backend/storage/cache/*
+!backend/storage/logs/.gitkeep
+!backend/storage/cache/.gitkeep
+
+# ─── OS ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDEs ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
