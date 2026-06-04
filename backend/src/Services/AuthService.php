@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\PasswordReset;
 use App\Models\User;
 
 class AuthService
@@ -16,17 +17,18 @@ class AuthService
         'DESENVOLVEDOR',
     ];
 
-    // Setores que só podem ter um único usuário cadastrado
     private const EXCLUSIVE = [
         'ADMINISTRAÇÃO',
         'DESENVOLVEDOR',
     ];
 
-    private User $user;
+    private User          $user;
+    private PasswordReset $passwordReset;
 
     public function __construct()
     {
-        $this->user = new User();
+        $this->user          = new User();
+        $this->passwordReset = new PasswordReset();
     }
 
     public function getAvailableSectors(): array
@@ -52,7 +54,6 @@ class AuthService
             return ['ok' => false, 'message' => 'Setor inválido.'];
         }
 
-        // Revalida exclusividade no momento do cadastro (race-condition safe via DB unique check)
         if (in_array($setor, self::EXCLUSIVE, true) && $this->user->sectorTaken($setor)) {
             return ['ok' => false, 'message' => 'Este setor já está preenchido.'];
         }
@@ -89,6 +90,49 @@ class AuthService
         ];
     }
 
+    public function forgotPassword(string $email): array
+    {
+        // Sempre retorna ok — não revela se o e-mail existe ou não
+        if (!$this->user->emailExists($email)) {
+            return ['ok' => true];
+        }
+
+        $this->passwordReset->deleteByEmail($email);
+
+        $token     = bin2hex(random_bytes(32));
+        $hashed    = hash('sha256', $token);
+        $expiresAt = date('Y-m-d H:i:s', time() + 3600);
+
+        $this->passwordReset->create($email, $hashed, $expiresAt);
+
+        $appUrl   = rtrim($_ENV['APP_URL'] ?? '', '/');
+        $resetUrl = $appUrl . '/reset-password.html?token=' . $token;
+
+        MailService::send(
+            $email,
+            'Redefinição de senha — Sistema MX',
+            $this->resetEmailTemplate($resetUrl)
+        );
+
+        return ['ok' => true];
+    }
+
+    public function resetPassword(string $token, string $newPassword): array
+    {
+        $hashed = hash('sha256', $token);
+        $reset  = $this->passwordReset->findValidToken($hashed);
+
+        if ($reset === null) {
+            return ['ok' => false, 'message' => 'Link inválido ou expirado.'];
+        }
+
+        $hash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
+        $this->user->updatePassword($reset['email'], $hash);
+        $this->passwordReset->deleteByEmail($reset['email']);
+
+        return ['ok' => true];
+    }
+
     private function generateToken(int $userId): string
     {
         $payload = base64_encode(json_encode([
@@ -98,5 +142,26 @@ class AuthService
         ]));
         $sig = hash_hmac('sha256', $payload, $_ENV['APP_SECRET']);
         return $payload . '.' . $sig;
+    }
+
+    private function resetEmailTemplate(string $url): string
+    {
+        return "
+        <div style='font-family:system-ui,sans-serif;max-width:400px;margin:0 auto;padding:32px'>
+            <h2 style='font-size:17px;font-weight:600;margin:0 0 16px;color:#111'>Redefinição de senha</h2>
+            <p style='color:#444;font-size:14px;line-height:1.6;margin:0 0 24px'>
+                Recebemos uma solicitação para redefinir a senha da sua conta.<br>
+                Clique no botão abaixo. O link expira em <strong>1 hora</strong>.
+            </p>
+            <a href='{$url}'
+               style='display:inline-block;background:#111;color:#fff;text-decoration:none;
+                      padding:11px 22px;border-radius:6px;font-size:14px;font-weight:600'>
+                Redefinir senha
+            </a>
+            <p style='color:#999;font-size:12px;margin:24px 0 0;line-height:1.5'>
+                Se você não solicitou isso, ignore este e-mail.<br>
+                Sua senha não será alterada.
+            </p>
+        </div>";
     }
 }

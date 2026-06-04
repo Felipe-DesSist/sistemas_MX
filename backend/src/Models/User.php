@@ -43,4 +43,10 @@ class User
         $stmt->execute([$setor]);
         return (bool) $stmt->fetchColumn();
     }
+
+    public function updatePassword(string $email, string $passwordHash): void
+    {
+        $stmt = $this->db->prepare('UPDATE users SET password = ? WHERE email = ?');
+        $stmt->execute([$passwordHash, $email]);
+    }
 }

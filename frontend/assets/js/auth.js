@@ -90,6 +90,50 @@
     sectorGrid.innerHTML = `<span class="sector-status${isError ? ' error' : ''}">${text}</span>`;
   }
 
+  // --- Forgot password panel ---
+  const tabsEl    = document.querySelector('.tabs');
+  const openForgot = document.getElementById('open-forgot');
+  const backLogin  = document.getElementById('back-login');
+
+  openForgot.addEventListener('click', () => {
+    document.getElementById('login').classList.remove('active');
+    tabsEl.style.display = 'none';
+    document.getElementById('forgot').classList.add('active');
+  });
+
+  backLogin.addEventListener('click', () => {
+    document.getElementById('forgot').classList.remove('active');
+    tabsEl.style.display = '';
+    document.getElementById('login').classList.add('active');
+    const fp = document.getElementById('forgot-form');
+    fp.reset();
+    setMsg(fp, '', '');
+  });
+
+  const forgotForm = document.getElementById('forgot-form');
+  const forgotBtn  = forgotForm.querySelector('.btn-primary');
+  forgotBtn.dataset.label = forgotBtn.textContent;
+
+  forgotForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = forgotForm.querySelector('#forgot-email').value.trim();
+
+    if (!email) { setMsg(forgotForm, 'Informe seu e-mail.', 'error'); return; }
+
+    setLoading(forgotBtn, true);
+    setMsg(forgotForm, '', '');
+
+    try {
+      await post('/auth/forgot-password', { email });
+      setMsg(forgotForm, 'Se o e-mail existir, você receberá o link em breve.', 'success');
+      forgotForm.reset();
+    } catch {
+      setMsg(forgotForm, 'Erro de conexão. Tente novamente.', 'error');
+    } finally {
+      setLoading(forgotBtn, false);
+    }
+  });
+
   // --- Login ---
   const loginForm = document.getElementById('login');
   const loginBtn  = loginForm.querySelector('.btn-primary');

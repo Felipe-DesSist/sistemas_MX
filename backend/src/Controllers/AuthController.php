@@ -17,7 +17,7 @@ class AuthController
         $this->auth = new AuthService();
     }
 
-    public function sectors(Request $request): void
+    public function sectors(Request $_request): void
     {
         Response::json($this->auth->getAvailableSectors());
     }
@@ -73,5 +73,42 @@ class AuthController
         }
 
         Response::json($result, 201);
+    }
+
+    public function forgotPassword(Request $request): void
+    {
+        $email = trim($request->body()['email'] ?? '');
+
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Response::json(['error' => 'E-mail inválido.'], 422);
+        }
+
+        $this->auth->forgotPassword($email);
+
+        // Sempre retorna 200 — não revela se o e-mail existe
+        Response::json(['ok' => true]);
+    }
+
+    public function resetPassword(Request $request): void
+    {
+        $body     = $request->body();
+        $token    = trim($body['token'] ?? '');
+        $password = $body['password'] ?? '';
+
+        if (!$token || !$password) {
+            Response::json(['error' => 'Dados inválidos.'], 422);
+        }
+
+        if (strlen($password) < 8) {
+            Response::json(['error' => 'Senha deve ter no mínimo 8 caracteres.'], 422);
+        }
+
+        $result = $this->auth->resetPassword($token, $password);
+
+        if (!$result['ok']) {
+            Response::json(['error' => $result['message']], 400);
+        }
+
+        Response::json(['ok' => true]);
     }
 }
