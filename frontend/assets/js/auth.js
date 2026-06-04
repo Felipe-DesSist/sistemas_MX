@@ -153,8 +153,10 @@
       const { ok, data } = await post('/auth/login', { email, password });
       if (!ok) { setMsg(loginForm, data.error || 'Falha no login.', 'error'); return; }
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      const isAdmin = ['ADMINISTRAÇÃO', 'DESENVOLVEDOR'].includes(data.user.setor);
       setMsg(loginForm, 'Bem-vindo!', 'success');
-      setTimeout(() => { window.location.href = '/'; }, 800);
+      setTimeout(() => { window.location.href = isAdmin ? '/admin.html' : '/'; }, 800);
     } catch {
       setMsg(loginForm, 'Erro de conexão. Tente novamente.', 'error');
     } finally {

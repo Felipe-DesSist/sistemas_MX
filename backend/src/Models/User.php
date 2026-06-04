@@ -49,4 +49,36 @@ class User
         $stmt = $this->db->prepare('UPDATE users SET password = ? WHERE email = ?');
         $stmt->execute([$passwordHash, $email]);
     }
+
+    public function findAll(): array
+    {
+        $stmt = $this->db->query(
+            'SELECT id, name, email, setor, created_at FROM users ORDER BY name ASC'
+        );
+        return $stmt->fetchAll();
+    }
+
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT id, name, email, setor FROM users WHERE id = ? LIMIT 1'
+        );
+        $stmt->execute([$id]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function sectorTakenByOther(string $setor, int $excludeId): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT 1 FROM users WHERE setor = ? AND id != ? LIMIT 1'
+        );
+        $stmt->execute([$setor, $excludeId]);
+        return (bool) $stmt->fetchColumn();
+    }
+
+    public function updateSector(int $id, string $setor): void
+    {
+        $stmt = $this->db->prepare('UPDATE users SET setor = ? WHERE id = ?');
+        $stmt->execute([$setor, $id]);
+    }
 }

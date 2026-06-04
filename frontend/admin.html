@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Sistema MX</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-page">
+
+  <header class="admin-header">
+    <span class="admin-header-title">SISTEMA MX</span>
+    <div class="admin-header-right">
+      <span id="user-name"></span>
+      <span id="user-setor" class="setor-badge"></span>
+      <button id="btn-logout" class="btn-logout">Sair</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+    <h2>Funcionários</h2>
+    <table class="users-table" id="users-table" hidden>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Setor</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="users-tbody"></tbody>
+    </table>
+    <p id="admin-msg" class="admin-msg">Carregando…</p>
+  </div>
+
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
