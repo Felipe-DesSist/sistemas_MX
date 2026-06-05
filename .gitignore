@@ -3,6 +3,7 @@ System Volume Information/
 
 # ─── Backend ───────────────────────────────────────────
 backend/.env
+backend/.env.local
 backend/vendor/
 backend/storage/logs/*
 backend/storage/cache/*
