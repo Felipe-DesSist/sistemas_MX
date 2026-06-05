@@ -44,7 +44,7 @@
       if (!res.ok) { setMsg(data.error || 'Erro ao redefinir senha.', 'error'); setLoading(false); return; }
 
       setMsg('Senha redefinida! Redirecionando…', 'success');
-      setTimeout(() => { window.location.href = '/login.html'; }, 1500);
+      setTimeout(() => { window.location.href = '/'; }, 1500);
 
     } catch {
       setMsg('Erro de conexão. Tente novamente.', 'error');

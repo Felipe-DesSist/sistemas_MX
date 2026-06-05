@@ -3,10 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
+  <title>Auth</title>
   <link rel="stylesheet" href="assets/css/style.css?v=1">
 </head>
 <body>
+  <main class="auth-container">
+    <div class="auth-box">
 
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="login" role="tab" aria-selected="true">Login</button>
+        <button class="tab" data-tab="signup" role="tab" aria-selected="false">Sign up</button>
+      </div>
+
+      <!-- Login -->
+      <form id="login" class="form active" novalidate>
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="login-pass">Password</label>
+          <input id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="button" class="forgot" id="open-forgot">Esqueceu a senha?</button>
+        <button type="submit" class="btn-primary">Login</button>
+        <p class="msg" aria-live="polite"></p>
+      </form>
+
+      <!-- Forgot password -->
+      <div id="forgot" class="form">
+        <button type="button" class="back-btn" id="back-login">← Voltar</button>
+        <form id="forgot-form" novalidate>
+          <div class="field">
+            <label for="forgot-email">Email</label>
+            <input id="forgot-email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required>
+          </div>
+          <button type="submit" class="btn-primary">Enviar link de redefinição</button>
+          <p class="msg" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <!-- Sign up -->
+      <form id="signup" class="form" novalidate>
+        <div class="field">
+          <label for="signup-name">Nome</label>
+          <input id="signup-name" type="text" placeholder="Seu nome" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="signup-pass">Senha</label>
+          <input id="signup-pass" type="password" placeholder="Mín. 8 caracteres" autocomplete="new-password" required minlength="8">
+        </div>
+        <div class="field">
+          <label>Setor</label>
+          <div id="sector-grid" class="sector-grid" role="group" aria-label="Selecione seu setor">
+            <span class="sector-status">Carregando setores…</span>
+          </div>
+          <input type="hidden" id="signup-sector">
+        </div>
+        <button type="submit" class="btn-primary">Criar conta</button>
+        <p class="msg" aria-live="polite"></p>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="assets/js/auth.js?v=1"></script>
 </body>
 </html>

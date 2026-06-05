@@ -187,7 +187,7 @@
       const { ok, data } = await post('/auth/register', { name, email, password, setor });
       if (!ok) { setMsg(signupForm, data.error || 'Falha no cadastro.', 'error'); return; }
       setMsg(signupForm, 'Conta criada! Redirecionando…', 'success');
-      setTimeout(() => { window.location.href = '/login.html'; }, 1000);
+      setTimeout(() => { window.location.href = '/'; }, 1000);
     } catch {
       setMsg(signupForm, 'Erro de conexão. Tente novamente.', 'error');
     } finally {

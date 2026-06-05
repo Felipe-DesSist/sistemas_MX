@@ -7,7 +7,7 @@
   const user  = JSON.parse(localStorage.getItem('user') || 'null');
 
   if (!token || !user || !ADMIN_SECTORS.includes(user.setor)) {
-    window.location.href = '/login.html';
+    window.location.href = '/';
   }
 
   document.getElementById('user-name').textContent  = user.name;
@@ -16,7 +16,7 @@
   document.getElementById('btn-logout').addEventListener('click', () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/login.html';
+    window.location.href = '/';
   });
 
   const tbody   = document.getElementById('users-tbody');
@@ -31,7 +31,7 @@
       });
 
       if (res.status === 401 || res.status === 403) {
-        window.location.href = '/login.html';
+        window.location.href = '/';
         return;
       }
 
